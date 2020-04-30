@@ -4,13 +4,16 @@ const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 
+const cookieParser = require('cookie-parser')
+
+
 const controllers = require('./controllers/index');
 require('dotenv').config();
 
 const app = express();
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
-
+app.use(cookieParser());
 // set up view engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');

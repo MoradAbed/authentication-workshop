@@ -6,7 +6,6 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 
-
 exports.loginPage = (req, res) => {
   res.render('login', { activePage: { login: true } });
 };
@@ -60,26 +59,31 @@ exports.authenticate = (req, res) => {
   const myUser = req.body.username;
 
   findByUsername(myUser)
-  .then((user) => (
-    bcrypt.compare(myPass, user.password)
-    .then(function(result){
-      if (result) {
-        res.redirect('/')
-      } else {
-        throw new Error("Password does not match{compareFunc}")
-      }
+    .then((user) => (
+      bcrypt.compare(myPass, user.password)
+        .then(function (result) {
+          if (result) {
+            console.log(res.cookie)
+            res.cookie('logged_in', true, 'access_token', myUser, { httpOnly: true, maxAge: 9000 });
+            res.cookie('access_token', myUser, { httpOnly: true, maxAge: 9000 })
+            res.redirect('/')
+          } else {
+            throw new Error("Password does not match{compareFunc}")
+          }
+        })
+    ))
+    .catch((e) => {
+      res.render('login', {
+        err: e.message
+      })
     })
-  ))
-  .catch((e) => {
-    res.render('login', {
-      err: e.message
-    })
-  })
-  
+
 
 };
 
 
 exports.logout = (req, res) => {
-
+  res.clearCookie('logged_in');
+  res.clearCookie('access_token');
+  res.redirect('/')
 }
