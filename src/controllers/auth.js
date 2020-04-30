@@ -1,9 +1,12 @@
 // use these functions to manipulate our database
 const { findByUsername, addNewUser } = require('../models/users/User.model');
 const bcrypt = require('bcrypt');
-
+require('dotenv').config()
+const jwt = require('jsonwebtoken');
 
 const saltRounds = 10;
+
+
 
 
 exports.loginPage = (req, res) => {
@@ -48,13 +51,20 @@ exports.addUser = (req, res) => {
   }
 };
 
+function jwting(myUser) {
+  const userTkn = jwt.sign({
+    user: myUser
+  }, process.env.JWT_SECRET);
+  return userTkn;
+}
+
 // this function handles the POST /authenticate route
 // it finds the user in our database by his username that he inputed
 // then compares the password that he inputed with the one in the db
 // using bcrypt and then redirects back to the home page 
 // make sure to look at home.hbs file to be able to modify the home page when user is logged in
 // also handle all possible errors that might occured by sending a message back to the cleint
-exports.authenticate = (req, res) => {
+exports.authenticate = (req, res, next) => {
   const myPass = req.body.password;
   const myUser = req.body.username;
 
@@ -63,12 +73,14 @@ exports.authenticate = (req, res) => {
       bcrypt.compare(myPass, user.password)
         .then(function (result) {
           if (result) {
-            console.log(res.cookie)
-            res.cookie('logged_in', true, 'access_token', myUser, { httpOnly: true, maxAge: 9000 });
-            res.cookie('access_token', myUser, { httpOnly: true, maxAge: 9000 })
+            // console.log(res.cookie)
+            const jwtTkn = jwting(myUser)
+            console.log(jwtTkn)
+            res.cookie('logged_in', true, { httpOnly: true, maxAge: 9000 });
+            res.cookie('access_token', jwtTkn, { httpOnly: true, maxAge: 9000 })
             res.redirect('/')
           } else {
-            throw new Error("Password does not match{compareFunc}")
+            next(new Error("Password does not match{compareFunc}"))
           }
         })
     ))
