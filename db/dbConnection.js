@@ -12,8 +12,8 @@ const localDB = {
   host: 'localhost',
   port: 5432,
   database: 'asgard',
-  user: 'heimdall',
-  password: '123123'
+  user: 'authws',
+  password: 'qwerty123'
 };
 
 const connection = process.env.NODE_ENV === 'production' ? herokuDB : localDB;

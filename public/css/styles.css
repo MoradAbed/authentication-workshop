@@ -275,3 +275,10 @@
   .error__msg {
     color: #999;
   }
+
+  /******
+  */
+  .redErr{
+    color: red;
+    text-align: center;
+  }

@@ -1,11 +1,19 @@
 // use these functions to manipulate our database
-const { findByUsername, addNewUser } = require('../models/users/User.model');
+const { findByUsername, addNewUser} = require('../models/users/User.model');
+const bcrypt = require('bcrypt');
+
+
+const saltRounds = 10;
+
+
 
 exports.loginPage = (req, res) => {
   res.render('login', { activePage: { login: true } });
 };
 exports.registerPage = (req, res) => {
-  res.render('register', { activePage: { register: true } });
+  res.render('register', { activePage: { register: true },
+err: ""
+});
 };
 
 // This function handles the POST /addUser route
@@ -13,8 +21,31 @@ exports.registerPage = (req, res) => {
 // a proper error message
 // hash the password, then add the new user to our database using the v addNewUser method
 // make sure to handle any error that might occured
-exports.addUser = (req, res, err) => {
-  
+exports.addUser = (req, res) => {
+  const myPass = req.body.password;
+  const myUser = req.body.username;
+  // console.log(myPass, myUser)
+  const confirmPassword = req.body.confirmPassword;
+
+  if (myPass !== confirmPassword) {
+    // return Error('the passwords does not match')
+    res.render('register', { passErr: true })
+  } else {
+    bcrypt.hash(myPass, saltRounds, (err, hash) => {
+      if (err) {
+        throw new Error('Please try another password')
+      } else {
+        addNewUser(myUser, hash)
+          .then( () => res.redirect('/'))
+          .catch((e) => {
+            res.render('register', {
+              userErr: true,
+              err: e.message
+            })
+          })
+      }
+    })
+  }
 };
 
 // this function handles the POST /authenticate route
@@ -29,5 +60,5 @@ exports.authenticate = (req, res) => {
 
 
 exports.logout = (req, res) => {
-  
+
 }

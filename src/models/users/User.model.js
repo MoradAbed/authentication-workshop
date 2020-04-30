@@ -3,8 +3,6 @@ const db = require('../../../db/dbConnection');
 
 // !! will turn the value into a boolean
 // so if length is 0 then it's converted to false which means user not found
-const checkIfUserExists = (username) =>
-  !!db.users.filter((user) => user.username === username).length;
 
 /**
  * @param  {string} username
