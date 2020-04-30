@@ -1,5 +1,5 @@
 // use these functions to manipulate our database
-const { findByUsername, addNewUser} = require('../models/users/User.model');
+const { findByUsername, addNewUser } = require('../models/users/User.model');
 const bcrypt = require('bcrypt');
 
 
@@ -11,9 +11,10 @@ exports.loginPage = (req, res) => {
   res.render('login', { activePage: { login: true } });
 };
 exports.registerPage = (req, res) => {
-  res.render('register', { activePage: { register: true },
-err: ""
-});
+  res.render('register', {
+    activePage: { register: true },
+    err: ""
+  });
 };
 
 // This function handles the POST /addUser route
@@ -36,7 +37,7 @@ exports.addUser = (req, res) => {
         throw new Error('Please try another password')
       } else {
         addNewUser(myUser, hash)
-          .then( () => res.redirect('/'))
+          .then(() => res.redirect('/'))
           .catch((e) => {
             res.render('register', {
               userErr: true,
@@ -55,6 +56,26 @@ exports.addUser = (req, res) => {
 // make sure to look at home.hbs file to be able to modify the home page when user is logged in
 // also handle all possible errors that might occured by sending a message back to the cleint
 exports.authenticate = (req, res) => {
+  const myPass = req.body.password;
+  const myUser = req.body.username;
+
+  findByUsername(myUser)
+  .then((user) => (
+    bcrypt.compare(myPass, user.password)
+    .then(function(result){
+      if (result) {
+        res.redirect('/')
+      } else {
+        throw new Error("Password does not match{compareFunc}")
+      }
+    })
+  ))
+  .catch((e) => {
+    res.render('login', {
+      err: e.message
+    })
+  })
+  
 
 };
 

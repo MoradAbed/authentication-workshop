@@ -6,5 +6,7 @@
     <input class="text-input" type="password" name="password" placeholder="Password">
     <input class="submit" type="submit" value="Submit">
   </form>
-
+{{#if err}}
+<div class="redErr"> {{err}} </div>
+{{/if}}
 </section>
