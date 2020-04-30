@@ -1,7 +1,9 @@
 <section class="main__container--limited-width">
   {{#if signedIn}}
     <h1 class="main__title">Hello there, {{username}}</h1>
+    <button>
     <a href="/logout">LogOut</a>
+    </button>
   {{else}}
     <h1 class="main__title">Welcome to Asgard's gates.</h1>
   {{/if}}
