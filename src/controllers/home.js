@@ -4,29 +4,19 @@ const jwt = require('jsonwebtoken');
 exports.get = (req, res) => {
     console.log(req.cookies)
 
-    if (req.cookies.logged_in) {
-        jwt.verify(req.cookies.access_token, process.env.JWT_SECRET, (err, result) => {
-            if (err) {
-                res.render('error', {
-                    statusCode: 500,
-                    errorMessage: "JWT token not verified"
-                }); //error handling (cb) while verifying the jwt
-            } else {
-                res.render('home', {
-                    activePage: { home: true },
-                    signedIn: true,
-                    username: result.user
-                }); //the logged in home page 
-                console.log("result is", result)
-            }
-        })
 
+    if (res.locals.user) {
 
-    } else {
-        // console.log(1)
-        res.render('home', { activePage: { home: true } }) //if there is no cookies, renders home page
+        res.render('home', {
+            activePage: { home: true },
+            signedIn: true,
+            username: res.locals.user.user
+        }); //the logged in home page 
     }
-};
+    else {
+        res.render('home', { activePage: { home: true } })
+    }
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////

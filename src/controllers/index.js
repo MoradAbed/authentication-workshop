@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const authCheck = require("../middlewares/authcheck")
 
 const home = require('./home');
 const auth = require('./auth');
 const error = require('./error');
 
 // add home route
-router.get('/', home.get);
+router.get('/', authCheck, home.get);
 router.get('/login', auth.loginPage);
 router.get('/register', auth.registerPage);
 router.post('/authenticate', auth.authenticate);
